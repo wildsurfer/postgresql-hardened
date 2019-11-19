@@ -1,4 +1,4 @@
-FROM postgres:10.3-alpine
+FROM postgres:12.1-alpine
 
 MAINTAINER Ivan Kuznetsov <kuzma.wm@gmail.com>
 
