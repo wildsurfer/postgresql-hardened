@@ -15,6 +15,8 @@ jobs:
       packages: write
     steps:
       - uses: actions/checkout@v4
+      - uses: docker/setup-qemu-action@v3
+      - uses: docker/setup-buildx-action@v3
 
       - name: Build
         run: docker build --pull -t postgresql-hardened .
@@ -27,7 +29,6 @@ jobs:
         run: |
           echo "${{ secrets.GITHUB_TOKEN }}" | docker login ghcr.io -u "${{ github.actor }}" --password-stdin
           MAJOR=$(docker run --rm postgresql-hardened postgres --version | grep -oE '[0-9]+' | head -1)
-          docker tag postgresql-hardened "ghcr.io/wildsurfer/postgresql-hardened:latest"
-          docker tag postgresql-hardened "ghcr.io/wildsurfer/postgresql-hardened:$MAJOR"
-          docker push "ghcr.io/wildsurfer/postgresql-hardened:latest"
-          docker push "ghcr.io/wildsurfer/postgresql-hardened:$MAJOR"
+          docker buildx build --pull --platform linux/amd64,linux/arm64 --push \
+            -t "ghcr.io/wildsurfer/postgresql-hardened:latest" \
+            -t "ghcr.io/wildsurfer/postgresql-hardened:$MAJOR" .
