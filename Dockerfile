@@ -1,9 +1,7 @@
-FROM postgres:12.1-alpine
+FROM postgres:18-alpine
 
-MAINTAINER Ivan Kuznetsov <kuzma.wm@gmail.com>
-
-RUN apk add --no-cache --virtual build-deps make build-base py-pip clang llvm && \
-  pip install pgxnclient && \
+RUN apk add --no-cache --virtual build-deps make build-base py3-pip clang21 llvm21 && \
+  pip install --break-system-packages pgxnclient && \
   pgxn install safeupdate && \
   echo "shared_preload_libraries=safeupdate" >> /usr/local/share/postgresql/postgresql.conf.sample && \
   apk del build-deps
